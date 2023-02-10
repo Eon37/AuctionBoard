@@ -1,9 +1,13 @@
 package com.example.AuctionBoard.api.currentPrice;
 
 import com.example.AuctionBoard.api.notice.Notice;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "currentPrice")
 @Entity(name = "current_prices")
 public class CurrentPrice {
     @Id
@@ -11,7 +15,6 @@ public class CurrentPrice {
     private Long id;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "notice_id", referencedColumnName = "id")
-    @JsonManagedReference
     private Notice notice;
     private Integer currentPrice;
     private String currentEmail;

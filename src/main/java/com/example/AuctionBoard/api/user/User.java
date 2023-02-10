@@ -1,13 +1,18 @@
 package com.example.AuctionBoard.api.user;
 
 import com.example.AuctionBoard.api.notice.Notice;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
 import java.util.Collection;
 import java.util.Collections;
 
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 @Entity(name = "users")
 public class User {
     @Id
@@ -18,7 +23,6 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-    @JsonManagedReference
     private Collection<Notice> notices = Collections.emptyList();
 
     private User() {}

@@ -3,13 +3,14 @@ package com.example.AuctionBoard.api.notice;
 import com.example.AuctionBoard.api.currentPrice.CurrentPrice;
 import com.example.AuctionBoard.api.image.DBImage;
 import com.example.AuctionBoard.api.user.User;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 
 import java.time.Instant;
 
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 @Entity(name = "notices")
 public class Notice {
     @Id
@@ -25,13 +26,13 @@ public class Notice {
     //todo fix n+1
     @ManyToOne //todo cascade
     @JoinColumn(name = "user_id")
-    @JsonBackReference
+    @JsonIdentityReference(alwaysAsId=true)
     private User user;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "image_id")
     private DBImage image;
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "notice")
-    @JsonBackReference
+    @JsonIdentityReference(alwaysAsId=true)
     private CurrentPrice currentPrice;
 
     public Notice(String title, String description, Integer startingPrice) {

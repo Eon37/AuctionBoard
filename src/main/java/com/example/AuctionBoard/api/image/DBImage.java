@@ -1,9 +1,6 @@
 package com.example.AuctionBoard.api.image;
 
-import com.example.AuctionBoard.api.notice.Notice;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 
 @Entity(name = "images")
