@@ -1,5 +1,6 @@
 package com.example.AuctionBoard.api.notice;
 
+import com.example.AuctionBoard.Utils.NoticeIdConcurrentLock;
 import com.example.AuctionBoard.Utils.ContextUtils;
 import com.example.AuctionBoard.api.image.*;
 import com.example.AuctionBoard.api.user.User;
@@ -76,9 +77,15 @@ public class NoticeServiceImpl implements NoticeService {
 
     @Override
     public void deactivate(Long id) {
-        Notice notice = getById(id);
-        notice.setActive(false);
+        try {
+            while (!NoticeIdConcurrentLock.tryLock(id)) {}
 
-        noticeRepository.save(notice); //todo bd side? multithreading
+            Notice notice = getById(id);
+            notice.setActive(false);
+
+            noticeRepository.save(notice);
+        } finally {
+            NoticeIdConcurrentLock.unlock(id);
+        }
     }
 }

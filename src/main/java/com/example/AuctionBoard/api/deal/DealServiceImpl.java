@@ -1,5 +1,6 @@
 package com.example.AuctionBoard.api.deal;
 
+import com.example.AuctionBoard.Utils.NoticeIdConcurrentLock;
 import com.example.AuctionBoard.Utils.ContextUtils;
 import com.example.AuctionBoard.api.currentPrice.CurrentPrice;
 import com.example.AuctionBoard.api.currentPrice.CurrentPriceService;
@@ -31,38 +32,47 @@ public class DealServiceImpl implements DealService {
     }
 
     @Override
-    public void bet(Long noticeId, Integer newPrice) { //todo multithreading
-        Notice notice = noticeService.getById(noticeId);
+    public void bet(Long noticeId, Integer newPrice) {
+        try {
+            if (!NoticeIdConcurrentLock.tryLock(noticeId)) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Try again later");
+            }
 
-        if (!notice.isActive()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Notice is already inactive");
-        }
+            Notice notice = noticeService.getById(noticeId);
 
-        String newUserEmail = ContextUtils.getSpringContextUserOrThrow().getUsername();
+            if (!notice.isActive()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Notice is already inactive");
+            }
 
-        if (newUserEmail.equals(notice.getUser().getEmail())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User cannot buy his own stuff");
-        }
+            String newUserEmail = ContextUtils.getSpringContextUserOrThrow().getUsername();
 
-        Optional<CurrentPrice> currentPrice = currentPriceService.getByNoticeId(noticeId);
+            if (newUserEmail.equals(notice.getUser().getEmail())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User cannot buy his own stuff");
+            }
 
-        if (currentPrice.isPresent() && newPrice <= currentPrice.get().getCurrentPrice()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot lower the price");
-        }
+            Optional<CurrentPrice> currentPrice = currentPriceService.getByNoticeId(noticeId);
 
-        CurrentPrice updateCurrentPrice = new CurrentPrice(
-                currentPrice.map(CurrentPrice::getId).orElse(null),
-                notice,
-                newPrice,
-                newUserEmail);
+            if (currentPrice.isPresent() && newPrice <= currentPrice.get().getCurrentPrice()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot lower the price");
+            }
 
-        currentPriceService.save(updateCurrentPrice);
+            CurrentPrice updateCurrentPrice = new CurrentPrice(
+                    currentPrice.map(CurrentPrice::getId).orElse(null),
+                    notice,
+                    newPrice,
+                    newUserEmail);
 
-        if (currentPrice.isEmpty()) {
-            taskScheduler.schedule(new EndDealRunnable(notice), notice.getDueTo());
-        } else {
-            String previousUserEmail = currentPrice.map(CurrentPrice::getCurrentEmail).orElse(notice.getUser().getEmail());
-            notificationService.notifyPriceOutdated(previousUserEmail, notice);
+            currentPriceService.save(updateCurrentPrice);
+
+            if (currentPrice.isEmpty()) {
+                taskScheduler.schedule(new EndDealRunnable(notice), notice.getDueTo());
+            } else {
+                String previousUserEmail = currentPrice.map(CurrentPrice::getCurrentEmail)
+                        .orElse(notice.getUser().getEmail());
+                notificationService.notifyPriceOutdated(previousUserEmail, notice);
+            }
+        } finally {
+            NoticeIdConcurrentLock.unlock(noticeId);
         }
     }
 
@@ -75,8 +85,7 @@ public class DealServiceImpl implements DealService {
 
         @Override
         public void run() {
-            //todo stop price change
-            noticeService.deactivate(notice.getId()); //todo synch
+            noticeService.deactivate(notice.getId());
 
             CurrentPrice currentPrice = currentPriceService.getByNoticeId(notice.getId())
                     .orElseThrow(() -> { throw new IllegalArgumentException(); });
