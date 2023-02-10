@@ -1,6 +1,7 @@
 package com.example.AuctionBoard.api.notice;
 
 import com.example.AuctionBoard.Utils.JSONUtils;
+import com.example.AuctionBoard.api.deal.DealService;
 import com.example.AuctionBoard.configs.ServicePathConstants;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -11,9 +12,11 @@ import java.util.Collection;
 @RestController
 public class NoticeController {
     private final NoticeService noticeService;
+    private final DealService dealService;
 
-    public NoticeController(NoticeService noticeService) {
+    public NoticeController(NoticeService noticeService, DealService dealService) {
         this.noticeService = noticeService;
+        this.dealService = dealService;
     }
 
     @GetMapping(path = {"/", ServicePathConstants.NOTICE_SERVICE })
@@ -41,6 +44,6 @@ public class NoticeController {
 
     @PostMapping(path = ServicePathConstants.NOTICE_SERVICE + "/{id}/bet")
     public void bet(@PathVariable Long id, @RequestParam Integer newPrice) {
-        noticeService.bet(id, newPrice);
+        dealService.bet(id, newPrice);
     }
 }

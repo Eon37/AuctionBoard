@@ -10,5 +10,4 @@ public interface NoticeService {
     Notice upsert(Notice notice, MultipartFile image);
     void delete(Long id);
     void deactivate(Long id);
-    void bet(Long id, Integer newPrice);
 }
