@@ -1,7 +1,5 @@
 package com.example.AuctionBoard.api.user;
 
-import java.util.Collection;
-
 public interface UserService {
     User getById(Long id);
     User getByEmail(String email);

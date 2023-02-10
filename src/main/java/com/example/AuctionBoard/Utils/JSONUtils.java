@@ -12,7 +12,7 @@ public class JSONUtils {
         try {
              result = objectMapper.readValue(json, type);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect notice JSON data");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect JSON data");
         }
 
         return result;

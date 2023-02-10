@@ -8,10 +8,12 @@ import com.example.AuctionBoard.api.notice.NoticeService;
 import com.example.AuctionBoard.api.notification.NotificationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.TaskScheduler;
+import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
+@Service
 public class DealServiceImpl implements DealService {
     private final NoticeService noticeService;
     private final CurrentPriceService currentPriceService;
