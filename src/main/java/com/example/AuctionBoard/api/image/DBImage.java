@@ -1,6 +1,6 @@
 package com.example.AuctionBoard.api.image;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 
 @Entity(name = "images")

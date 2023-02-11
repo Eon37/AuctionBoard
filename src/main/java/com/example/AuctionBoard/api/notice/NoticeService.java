@@ -7,7 +7,7 @@ import java.util.Collection;
 public interface NoticeService {
     Collection<Notice> getAllActive(int pageNo, int pageSize);
     Notice getById(Long id);
-    Notice upsert(Notice notice, MultipartFile image);
-    void delete(Long id);
+    Notice save(Notice notice, MultipartFile image);
+    void delete(Long id, boolean wipe);
     void deactivate(Long id);
 }

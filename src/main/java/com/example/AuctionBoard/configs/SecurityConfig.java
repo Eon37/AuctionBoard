@@ -24,12 +24,17 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeHttpRequests((authz) -> authz
-                        .requestMatchers(HttpMethod.GET,
+                        .antMatchers("/v3/api-docs/**",
+                                        "/swagger-ui.html",
+                                        "/swagger-ui/**",
+                                        "/swagger-resources/**",
+                                        "/swagger-resources").permitAll()
+                        .antMatchers(HttpMethod.GET,
                                         "/", "/error/**",
-                                        ServicePathConstants.NOTICE_SERVICE,
-                                        ServicePathConstants.NOTICE_SERVICE + "/*") //todo try both in one
-                                .permitAll() //todo
-                        .requestMatchers(HttpMethod.POST, ServicePathConstants.REGISTER_SERVICE).permitAll()
+                                        ServicePathConstants.NOTICE_SERVICE + "/*")
+                                .permitAll()
+                        .antMatchers(HttpMethod.POST,
+                                        ServicePathConstants.REGISTER_SERVICE).permitAll()
                         .requestMatchers(PathRequest.toH2Console()).permitAll()
                         .anyRequest().authenticated()
                 )

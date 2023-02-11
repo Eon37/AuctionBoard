@@ -90,7 +90,7 @@ public class NoticeServiceTest {
             Mockito.when(noticeRepository.save(newNotice)).thenReturn(newNotice);
 
             //When
-            Notice notice = noticeService.upsert(newNotice, mockMultipartFile);
+            Notice notice = noticeService.save(newNotice, mockMultipartFile);
 
             //Then
             Assertions.assertTrue(notice.isActive());

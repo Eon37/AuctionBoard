@@ -43,7 +43,7 @@ public class NoticeServiceImpl implements NoticeService {
     }
 
     @Override
-    public Notice upsert(Notice notice, MultipartFile image) {
+    public Notice save(Notice notice, MultipartFile image) {
         return notice.getId() == null ? create(notice, image) : update(notice, image);
     }
 
@@ -71,8 +71,19 @@ public class NoticeServiceImpl implements NoticeService {
     }
 
     @Override
-    public void delete(Long id) {
-        noticeRepository.deleteById(id);
+    public void delete(Long id, boolean wipe) {
+        Notice notice = getById(id);
+        String currentUserEmail = ContextUtils.getSpringContextUserOrThrow().getUsername();
+
+        if (!currentUserEmail.equals(notice.getUser().getEmail())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot delete someone else's notice");
+        }
+
+        if (wipe) {
+            noticeRepository.deleteById(id);
+        } else {
+            deactivate(id);
+        }
     }
 
     @Override

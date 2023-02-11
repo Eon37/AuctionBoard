@@ -20,6 +20,6 @@ public class ContextUtils {
 
     public static UserDetails getSpringContextUserOrThrow() {
         return getSpringContextUser()
-                .orElseThrow(() -> {throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Unauthorized access");});
+                .orElseThrow(() -> { throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Forbidden action"); });
     }
 }

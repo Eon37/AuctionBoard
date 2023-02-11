@@ -4,7 +4,7 @@ import com.example.AuctionBoard.api.currentPrice.CurrentPrice;
 import com.example.AuctionBoard.api.image.DBImage;
 import com.example.AuctionBoard.api.user.User;
 import com.fasterxml.jackson.annotation.*;
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 import java.time.Instant;
 

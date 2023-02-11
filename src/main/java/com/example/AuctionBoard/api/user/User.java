@@ -2,10 +2,9 @@ package com.example.AuctionBoard.api.user;
 
 import com.example.AuctionBoard.api.notice.Notice;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 import java.util.Collection;
 import java.util.Collections;
