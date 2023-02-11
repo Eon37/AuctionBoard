@@ -1,16 +1,14 @@
 package com.example.AuctionBoard;
 
-import com.example.AuctionBoard.api.user.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
 
-import static com.example.AuctionBoard.api.notice.NoticeServiceTest.TEST_EMAIL;
-import static com.example.AuctionBoard.api.notice.NoticeServiceTest.TEST_PASS;
-
 public class TestUserDetails implements UserDetails {
+    public static final String TEST_EMAIL = "test_context@email.com";
+    public static final String TEST_PASS = "password_context";
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
