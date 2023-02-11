@@ -8,8 +8,12 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 @Configuration
 public class SchedulingConfig {
-    @Value("${notify.after.days:1L}")
-    public static final Long NOTIFY_AFTER_DAYS = 1L;
+    public static Long NOTIFY_AFTER_DAYS = 1L;
+
+    @Value("${notify.after.days:1}")
+    public void setNotifyAfterDays(Long value){
+        SchedulingConfig.NOTIFY_AFTER_DAYS = value;
+    }
 
     //todo better something persistent
     @Bean
