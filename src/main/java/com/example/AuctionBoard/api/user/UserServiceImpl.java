@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Collection;
+
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
@@ -16,6 +18,11 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    @Override
+    public Collection<User> getAll() {
+        return (Collection<User>) userRepository.findAll();
     }
 
     @Override
@@ -31,18 +38,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User save(User user) {
-        return user.getId() == null ? create(user) : update(user);
-    }
+    public User create(User user) {
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User with the given email already exists");
+        }
 
-    private User create(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
-    private User update(User newUser) {
-        User oldUser = getById(newUser.getId());
+    @Override
+    public User update(Long id, User newUser) {
+        User oldUser = getById(id);
 
+        newUser.setId(id);
         if (!StringUtils.hasText(newUser.getEmail())) newUser.setEmail(oldUser.getEmail());
         newUser.setPassword(StringUtils.hasText(newUser.getPassword())
                 ? passwordEncoder.encode(newUser.getPassword())
