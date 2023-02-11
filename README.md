@@ -1,11 +1,10 @@
 # AuctionBoard
 
 ## Build and run locally
-- You need to manually create a database file. Default file should be auctiondb.db in the project's root. You can also specify a different path to it in application.properties:
-```
-spring.datasource.url=jdbc:h2:file:./auctiondb 
-```
-- Build with gradle in project's root:
+- Default database file auctiondb is created automatically in the project's root. You can specify a path and credentials in application.properties
+
+
+- Build with gradle in project's root
 ```
 ./gradlew build
 ```
