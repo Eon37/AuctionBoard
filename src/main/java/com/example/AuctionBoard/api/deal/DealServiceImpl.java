@@ -1,6 +1,6 @@
 package com.example.AuctionBoard.api.deal;
 
-import com.example.AuctionBoard.Utils.NoticeIdConcurrentLock;
+import com.example.AuctionBoard.Utils.IdConcurrentLock;
 import com.example.AuctionBoard.Utils.ContextUtils;
 import com.example.AuctionBoard.api.currentPrice.CurrentPrice;
 import com.example.AuctionBoard.api.currentPrice.CurrentPriceService;
@@ -34,7 +34,7 @@ public class DealServiceImpl implements DealService {
     @Override
     public void bet(Long noticeId, Integer newPrice) {
         try {
-            if (!NoticeIdConcurrentLock.tryLock(noticeId)) {
+            if (!IdConcurrentLock.tryLock(IdConcurrentLock.BET_LOCK + noticeId)) {
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Try again later");
             }
 
@@ -72,7 +72,7 @@ public class DealServiceImpl implements DealService {
                 notificationService.notifyPriceOutdated(previousUserEmail, notice);
             }
         } finally {
-            NoticeIdConcurrentLock.unlock(noticeId);
+            IdConcurrentLock.unlock(IdConcurrentLock.BET_LOCK + noticeId);
         }
     }
 

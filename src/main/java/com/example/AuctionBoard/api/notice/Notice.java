@@ -27,6 +27,7 @@ public class Notice {
     @ManyToOne //todo cascade
     @JoinColumn(name = "user_id")
     @JsonIdentityReference(alwaysAsId=true)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private User user;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "image_id")

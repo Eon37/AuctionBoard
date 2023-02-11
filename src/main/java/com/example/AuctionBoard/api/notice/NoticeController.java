@@ -101,13 +101,13 @@ public class NoticeController {
     }
 
     @Operation(summary = "Delete notice",
-            description = "Delete or deactivate the notice",
+            description = "Delete the notice",
             responses = {
                     @ApiResponse(
                             description = "Delete successful",
                             responseCode = "200"),
                     @ApiResponse(
-                            description = "Notice not found while updating",
+                            description = "Notice not found",
                             responseCode = "404"),
                     @ApiResponse(
                             description = "Unauthorized access",
@@ -120,12 +120,8 @@ public class NoticeController {
     public void delete(@Parameter(name = "id",
                                  description = "The id of the notice to delete",
                                  required = true)
-                       @PathVariable Long id,
-
-                       @Parameter(name = "wipe",
-                               description = "Whether to remove entirely or not")
-                       @RequestParam(defaultValue = "false") boolean wipe) {
-        noticeService.delete(id, wipe);
+                       @PathVariable Long id) {
+        noticeService.delete(id);
     }
 
     @Operation(summary = "Make a bet",

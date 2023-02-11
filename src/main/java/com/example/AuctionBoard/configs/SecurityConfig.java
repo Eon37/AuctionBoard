@@ -25,16 +25,13 @@ public class SecurityConfig {
         http.csrf().disable()
                 .authorizeHttpRequests((authz) -> authz
                         .antMatchers("/v3/api-docs/**",
-                                        "/swagger-ui.html",
-                                        "/swagger-ui/**",
-                                        "/swagger-resources/**",
-                                        "/swagger-resources").permitAll()
-                        .antMatchers(HttpMethod.GET,
-                                        "/", "/error/**",
-                                        ServicePathConstants.NOTICE_SERVICE + "/*")
-                                .permitAll()
-                        .antMatchers(HttpMethod.POST,
-                                        ServicePathConstants.REGISTER_SERVICE).permitAll()
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/swagger-resources/**",
+                                "/swagger-resources").permitAll()
+                        .antMatchers(HttpMethod.GET, "/", "/error/**",
+                                ServicePathConstants.NOTICE_SERVICE + "/*").permitAll()
+                        .antMatchers(HttpMethod.POST, ServicePathConstants.REGISTER_SERVICE).permitAll()
                         .requestMatchers(PathRequest.toH2Console()).permitAll()
                         .anyRequest().authenticated()
                 )

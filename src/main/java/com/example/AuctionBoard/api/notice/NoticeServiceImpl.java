@@ -1,6 +1,6 @@
 package com.example.AuctionBoard.api.notice;
 
-import com.example.AuctionBoard.Utils.NoticeIdConcurrentLock;
+import com.example.AuctionBoard.Utils.IdConcurrentLock;
 import com.example.AuctionBoard.Utils.ContextUtils;
 import com.example.AuctionBoard.api.image.*;
 import com.example.AuctionBoard.api.user.User;
@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -65,13 +66,21 @@ public class NoticeServiceImpl implements NoticeService {
 
     private Notice update(Notice newNotice, MultipartFile image) {
         Notice oldNotice = getById(newNotice.getId());
-//        Notice updatedNotice = new Notice(notice); todo
-//        CurrentPrice currentPrice = currentPriceService.getByNoticeId(notice.getId()).orElse(notice.getStartingPrice());
+
+        if (!StringUtils.hasText(newNotice.getTitle())) newNotice.setTitle(oldNotice.getTitle());
+        if (!StringUtils.hasText(newNotice.getDescription())) newNotice.setDescription(oldNotice.getDescription());
+        if (newNotice.getStartingPrice() == null) newNotice.setStartingPrice(oldNotice.getStartingPrice());
+        if (newNotice.getDueTo() == null) newNotice.setDueTo(oldNotice.getDueTo());
+
+        newNotice.setImage(image.isEmpty() ? oldNotice.getImage() : imageService.saveFromMultipart(image));
+        newNotice.setActive(oldNotice.isActive());
+        newNotice.setUser(oldNotice.getUser());
+
         return noticeRepository.save(oldNotice);
     }
 
     @Override
-    public void delete(Long id, boolean wipe) {
+    public void delete(Long id) {
         Notice notice = getById(id);
         String currentUserEmail = ContextUtils.getSpringContextUserOrThrow().getUsername();
 
@@ -79,24 +88,20 @@ public class NoticeServiceImpl implements NoticeService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot delete someone else's notice");
         }
 
-        if (wipe) {
-            noticeRepository.deleteById(id);
-        } else {
-            deactivate(id);
-        }
+        noticeRepository.deleteById(id);
     }
 
     @Override
     public void deactivate(Long id) {
         try {
-            while (!NoticeIdConcurrentLock.tryLock(id)) {}
+            while (!IdConcurrentLock.tryLock(IdConcurrentLock.BET_LOCK + id)) {}
 
             Notice notice = getById(id);
             notice.setActive(false);
 
             noticeRepository.save(notice);
         } finally {
-            NoticeIdConcurrentLock.unlock(id);
+            IdConcurrentLock.unlock(IdConcurrentLock.BET_LOCK + id);
         }
     }
 }

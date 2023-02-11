@@ -32,6 +32,6 @@ public class UserController {
                                     required = true,
                                     content = @Content(schema = @Schema(implementation = User.class)))
                          @RequestBody User user) {
-        return userService.create(user);
+        return userService.save(user);
     }
 }

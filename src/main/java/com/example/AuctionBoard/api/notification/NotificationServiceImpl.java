@@ -13,6 +13,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void notifyPriceOutdated(String email, Notice notice) {
+        //email to previous buyer
         logger.info("[{}]! Someone has just raised the stakes for [{}]", email, notice.getTitle());
     }
 

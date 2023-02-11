@@ -8,6 +8,6 @@ public interface NoticeService {
     Collection<Notice> getAllActive(int pageNo, int pageSize);
     Notice getById(Long id);
     Notice save(Notice notice, MultipartFile image);
-    void delete(Long id, boolean wipe);
+    void delete(Long id);
     void deactivate(Long id);
 }
