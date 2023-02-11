@@ -30,6 +30,7 @@ public class SecurityConfig {
                                 "/swagger-resources/**",
                                 "/swagger-resources").permitAll()
                         .antMatchers(HttpMethod.GET, "/", "/error/**",
+                                ServicePathConstants.NOTICE_SERVICE,
                                 ServicePathConstants.NOTICE_SERVICE + "/*").permitAll()
                         .antMatchers(HttpMethod.POST, ServicePathConstants.REGISTER_SERVICE).permitAll()
                         .requestMatchers(PathRequest.toH2Console()).permitAll()

@@ -6,6 +6,8 @@ import com.example.AuctionBoard.api.image.*;
 import com.example.AuctionBoard.api.user.User;
 import com.example.AuctionBoard.api.user.UserService;
 import com.example.AuctionBoard.configs.SchedulingConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,8 @@ import java.util.Collection;
 
 @Service
 public class NoticeServiceImpl implements NoticeService {
+    private static final Logger logger = LoggerFactory.getLogger(NoticeServiceImpl.class);
+
     private final NoticeRepository noticeRepository;
     private final DBImageService imageService;
     private final UserService userService;
@@ -40,7 +44,11 @@ public class NoticeServiceImpl implements NoticeService {
     @Override
     public Notice getById(Long id) {
         return noticeRepository.findById(id)
-                .orElseThrow(() -> { throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Notice not found"); });
+                .orElseThrow(() -> {
+                    String message = "Notice not found";
+                    logger.error(message);
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, message);
+                });
     }
 
     @Override
@@ -85,7 +93,9 @@ public class NoticeServiceImpl implements NoticeService {
         String currentUserEmail = ContextUtils.getSpringContextUserOrThrow().getUsername();
 
         if (!currentUserEmail.equals(notice.getUser().getEmail())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot delete someone else's notice");
+            String message = "Cannot delete someone else's notice";
+            logger.error(message);
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, message);
         }
 
         noticeRepository.deleteById(id);

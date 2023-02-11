@@ -1,5 +1,7 @@
 package com.example.AuctionBoard.api.user;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,6 +13,8 @@ import java.util.Collection;
 
 @Service
 public class UserServiceImpl implements UserService {
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -28,19 +32,29 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> { throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found by id"); });
+                .orElseThrow(() -> {
+                    String message = "User not found by id";
+                    logger.error(message);
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, message);
+                });
     }
 
     @Override
     public User getByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> { throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found by email"); });
+                .orElseThrow(() -> {
+                    String message = "User not found by email";
+                    logger.error(message);
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, message);
+                });
     }
 
     @Override
     public User create(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User with the given email already exists");
+            String message = "User with the given email already exists";
+            logger.error(message);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message);
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
