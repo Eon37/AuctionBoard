@@ -14,15 +14,15 @@ java -jar ./build/libs/AuctionBoard-0.0.1-SNAPSHOT.jar
 ```
 
 ## Project structure
-- Sources located in 
+- Sources located at
 ```
 ./src/main/java/com/example/AuctionBoard
 ```
-- Tests located in 
+- Tests located at
 ```
 ./src/test/java/com/example/AuctionBoard
 ```
-- Api documentation can be found in
+- Api documentation can be found at
 ```
 http://localhost:${PORT:8080}/swagger-ui/
 ```
