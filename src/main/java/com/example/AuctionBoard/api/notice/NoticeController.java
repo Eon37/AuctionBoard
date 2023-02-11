@@ -95,6 +95,7 @@ public class NoticeController {
                        @Parameter(name = "image",
                                   description = "The image file to attach to the notice",
                                   required = true,
+                                  allowEmptyValue = true,
                                   content = @Content(mediaType = "multipart/form-data"))
                        @RequestPart("image") MultipartFile image) {
         return noticeService.save(JSONUtils.fromString(notice, Notice.class), image);
